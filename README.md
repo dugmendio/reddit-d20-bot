@@ -6,8 +6,7 @@ A Reddit bot which allows the user to roll a d20 dice, and responds with the rol
 ## Getting Started
 ### Prerequisites
 
- - I prefer to run a Linux environment for development, however this
-   should run anywhere you can run python. 
+ - I prefer to run a Linux environment for development, however this should run anywhere you can run python. 
   - Install python from
    [https://docs.python.org/3/using/index.html](https://docs.python.org/3/using/index.html).
   - You'll also need a reddit account.
@@ -37,8 +36,8 @@ The bot is also configured to include the message before the result, producing t
 Response to this being: "2d20 (9, **1**) Hello: `10`"
 
 ## Deployment
-
-I've set up a very simple deploy running on a raspberry pi. There's definitely more robust and more stable solutions, but it seems to be working well for me.
+### Local
+I set up a very simple deploy running on a raspberry pi. There's definitely more robust and more stable solutions, but it seems to be work well for me.
 Edit the user crontab ``crontab -e``
 ```
 @reboot sleep 60 && /usr/bin/python3 /home/pi/Documents/reddit-d20-bot/reddit-d20-bot.py
@@ -47,6 +46,18 @@ This will start the script in the background on startup. I then also set the pi 
 ```
 0 */6 * * * /sbin/shutdown -r now
 ```
+
+### AWS
+Another method to ensure more reliability is to run on an AWS Lambda function. This takes a bit more work, but I had no issues with 2 bots running with decent popularity. As far as i'm aware, this will also run on the free tier.
+There's some good documentation out there for running a python Lambda function - specifically AWS's [Creating a function with runtime dependencies](https://docs.aws.amazon.com/lambda/latest/dg/python-package-create.html#python-package-create-with-dependency)
+
+In order to use this, I modified the call function to
+```
+def handle(event, context):
+    run_bot(reddit)
+```
+I then added an EventBridge trigger to run every 2 minutes to allow this to run. 
+
 ## Extra Docs
 [d20 Python Library](https://pypi.org/project/d20/) 
 [PRAW ](https://praw.readthedocs.io/en/latest/getting_started/installation.html)
